@@ -164,7 +164,8 @@ int main()
 	/*vertexShader.use();
 	vertexShader.setInt("texture", 0);*/
 
-	Model nanosuitModel("models/nanosuit/nanosuit.obj");
+	//Model nanosuitModel("models/nanosuit/nanosuit.obj");
+	Model terrain("models/terrain/final_terrain.obj");
 
 	// render loop
 	// -----------
@@ -228,7 +229,8 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
 		modelShader.setMat4("model", model);
-		nanosuitModel.Draw(modelShader);
+		//nanosuitModel.Draw(modelShader);
+		terrain.Draw(modelShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
