@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<TextureStruct>& textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureStruct> textures)
 {
 	this->vertices = vertices;
 	this->indices = indices;
@@ -10,8 +10,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, st
 	setupMesh();
 }
 
-// render the mesh
-void Mesh::Draw(const Shader& shader)
+void Mesh::Draw(Shader shader)
 {
 	// bind appropriate textures
 	unsigned int diffuseNr = 1;

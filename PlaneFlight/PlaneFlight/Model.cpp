@@ -1,19 +1,17 @@
 #include "Model.h"
 
-Model::Model(const std::string& path, bool gamma) : gammaCorrection(gamma)
+Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
 	loadModel(path);
 }
 
-// draws the model, and thus all its meshes
-void Model::Draw(const Shader& shader)
+void Model::Draw(Shader shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)
 		meshes[i].Draw(shader);
 }
 
-// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-void Model::loadModel(const std::string& path)
+void Model::loadModel(std::string const& path)
 {
 	// read file via ASSIMP
 	Assimp::Importer importer;
@@ -31,7 +29,6 @@ void Model::loadModel(const std::string& path)
 	processNode(scene->mRootNode, scene);
 }
 
-// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
 	// process each mesh located at the current node
@@ -47,6 +44,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	{
 		processNode(node->mChildren[i], scene);
 	}
+
 }
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
@@ -116,22 +114,20 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<TextureStruct> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 	// 2. specular maps
-	/*std::vector<TextureStruct> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());*/
+	std::vector<TextureStruct> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	// 3. normal maps
-	/*std::vector<TextureStruct> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());*/
+	std::vector<TextureStruct> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 	// 4. height maps
-	/*std::vector<TextureStruct> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());*/
+	std::vector<TextureStruct> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 	// return a mesh object created from the extracted mesh data
 	return Mesh(vertices, indices, textures);
 }
 
-// checks all material textures of a given type and loads the textures if they're not loaded yet.
-// the required info is returned as a Texture struct.
-std::vector<TextureStruct>& Model::loadMaterialTextures(aiMaterial* mat, const aiTextureType& type, const std::string& typeName)
+std::vector<TextureStruct> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
 	std::vector<TextureStruct> textures;
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)

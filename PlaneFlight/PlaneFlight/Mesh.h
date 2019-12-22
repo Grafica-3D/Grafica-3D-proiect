@@ -37,8 +37,8 @@ public:
 	std::vector<TextureStruct> textures;
 	unsigned int VAO;
 
-	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<TextureStruct>& textures);
-	void Draw(const Shader& shader);
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureStruct> textures);
+	void Draw(Shader shader);
 
 private:
 	unsigned int VBO, EBO;

@@ -21,7 +21,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 50.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -152,19 +152,11 @@ int main()
 	// -------------------------
 	//Texture texture("images/awesomeface.png", true);
 
-	//Texture modelArmTexture("models/nanosuit/arm_dif.png", true);
-	//Texture modelBodyTexture("models/nanosuit/body_dif.png", true);
-	//Texture modelGlassTexture("models/nanosuit/glass_dif.png", true);
-	//Texture modelHandTexture("models/nanosuit/hand_dif.png", true);
-	//Texture modelHelmetTexture("models/nanosuit/helmet_diff.png", true);
-	//Texture modelLegTexture("models/nanosuit/leg_dif.png", true);
-
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	/*vertexShader.use();
 	vertexShader.setInt("texture", 0);*/
 
-	//Model nanosuitModel("models/nanosuit/nanosuit.obj");
 	Model terrain("models/terrain/final_terrain.obj");
 
 	// render loop
@@ -219,7 +211,7 @@ int main()
 		modelShader.use();
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		modelShader.setMat4("projection", projection);
 		modelShader.setMat4("view", view);
