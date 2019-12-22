@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION  
 #include "stb/stb_image.h"
@@ -28,7 +29,7 @@ Texture::Texture(const std::string& path, bool rgba)
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		std::cout << "Failed to load image: " << path << "\n";
 	}
 	stbi_image_free(data);
 }
@@ -76,7 +77,7 @@ Texture::Texture(const std::string& path, bool rgba, TextureWrap wrap)
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		std::cout << "Failed to load image: " << path << "\n";
 	}
 	stbi_image_free(data);
 }
@@ -123,7 +124,7 @@ Texture::Texture(const std::string& path, bool rgba, TextureWrap wrap, float bor
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		std::cout << "Failed to load image: " << path << "\n";
 	}
 	stbi_image_free(data);
 }
@@ -193,7 +194,7 @@ Texture::Texture(const std::string& path, bool rgba, TextureFiltering minFilter,
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		std::cout << "Failed to load image: " << path << "\n";
 	}
 	stbi_image_free(data);
 }
@@ -282,7 +283,7 @@ Texture::Texture(const std::string& path, bool rgba, TextureWrap wrap, TextureFi
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		std::cout << "Failed to load image: " << path << "\n";
 	}
 	stbi_image_free(data);
 }
@@ -370,7 +371,7 @@ Texture::Texture(const std::string& path, bool rgba, TextureWrap wrap, float bor
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		std::cout << "Failed to load image: " << path << "\n";
 	}
 	stbi_image_free(data);
 }
