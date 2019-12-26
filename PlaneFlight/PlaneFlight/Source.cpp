@@ -8,6 +8,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Sound.h"
 
 #include <iostream>
 
@@ -25,6 +26,9 @@ Camera camera(glm::vec3(0.0f, 50.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+bool cameraOrbit = false;
+bool skipFrames = false;
+int playingSound = 0;
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -158,7 +162,8 @@ int main()
 	vertexShader.setInt("texture", 0);*/
 
 	Model terrain("models/terrain/final_terrain.obj");
-
+	Sound sound;
+	sound.play("sounds\\PlaneSound.wav");
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -224,6 +229,22 @@ int main()
 		//nanosuitModel.Draw(modelShader);
 		terrain.Draw(modelShader);
 
+		if (!skipFrames)
+		{
+			camera.setOrbit(200.0, deltaTime);
+			skipFrames = true;
+		}
+		else
+			skipFrames = false;
+
+		if (playingSound == 1)
+			sound.stop();
+		if (playingSound == 2)
+		{
+			sound.play("sounds\\PlaneSound.wav");
+			playingSound = 0;
+		}
+	    
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
@@ -247,15 +268,29 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		if (!cameraOrbit)
+			cameraOrbit = true;
+		else
+			cameraOrbit = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+	{
+		playingSound = 1;
+	}
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		playingSound = 2;
+	}
+	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		camera.ProcessKeyboard(RIGHT, deltaTime);*/
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
