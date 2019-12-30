@@ -2,9 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
-
 #include <string>
-
+#include<vector>
 class Texture
 {
 public:
@@ -34,5 +33,5 @@ public:
 	Texture(const std::string& path, bool rgba, TextureFiltering minFilter, TextureFiltering magFilter);
 	Texture(const std::string& path, bool rgba, TextureWrap wrap, TextureFiltering minFilter, TextureFiltering magFilter);
 	Texture(const std::string& path, bool rgba, TextureWrap wrap, float borderColor[], TextureFiltering minFilter, TextureFiltering magFilter);
-};
 
+};

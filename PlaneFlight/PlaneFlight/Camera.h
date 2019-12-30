@@ -72,7 +72,6 @@ public:
 		float cameraSpeed = SPEED * deltaTime + glfwGetTime();
 	    Position.x = radius * glm::sin(cameraSpeed);
 	    Position.z = radius * glm::cos(cameraSpeed);
-		std::cout << "Camera speed : " << cameraSpeed << " DT: " << deltaTime << std::endl;
 	}
 
 

@@ -1,6 +1,5 @@
 #include "Texture.h"
 #include <iostream>
-
 #define STB_IMAGE_IMPLEMENTATION  
 #include "stb/stb_image.h"
 
@@ -375,3 +374,4 @@ Texture::Texture(const std::string& path, bool rgba, TextureWrap wrap, float bor
 	}
 	stbi_image_free(data);
 }
+

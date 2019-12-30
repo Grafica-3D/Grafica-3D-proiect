@@ -42,6 +42,12 @@ public:
 	// ------------------------------------------------------------------------
 	void setMat4(const std::string& name, const glm::mat4& mat) const;
 
+	GLuint Program;
+	// Constructor generates the shader on the fly
+	Shader(const GLchar* vertexPath, const GLchar* fragmentPath,int Ceva);
+	// Uses the current shader
+	void Use();
+
 private:
 	// utility function for checking shader compilation/linking errors.
 	// ------------------------------------------------------------------------
