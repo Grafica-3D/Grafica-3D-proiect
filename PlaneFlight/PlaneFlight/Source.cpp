@@ -20,7 +20,8 @@ unsigned int loadCubemap(std::vector<std::string> faces);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
+bool blinn = false;
+bool blinnKeyPressed = false;
 // camera
 Camera camera(glm::vec3(0.0f, 50.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
@@ -33,6 +34,7 @@ int playingSound = 0;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+
 
 int main()
 {
@@ -73,13 +75,12 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-
-	// build and compile our shader zprogram
-	// ------------------------------------
-	//Shader vertexShader("shader.vs", "shader.fs");
-	Shader shader("6.2.cubemaps.vs", "6.2.cubemaps.fs");
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// build and compile our shaders 
+	Shader cubemapShader("6.2.cubemaps.vs", "6.2.cubemaps.fs");
 	Shader skyboxShader( "skybox.vs", "skybox.frag");
-
+	Shader lightShader("advanced_lighting.vs", "advanced_lighting.fs");
 	GLfloat skyboxVertices[] =
 	{
 	    -1.0f,  1.0f, -1.0f,
@@ -139,19 +140,24 @@ int main()
 
 	// Cubemap (Skybox)
 	std::vector<std::string> faces;
-	faces.push_back("images/right2.jpg");
-	faces.push_back("images/left2.jpg");
-	faces.push_back("images/top2.jpg");
-	faces.push_back("images/bottom2.jpg");
-	faces.push_back("images/back2.jpg");
-	faces.push_back("images/front2.jpg");
+	faces.push_back("images/right1.jpg");
+	faces.push_back("images/left1.jpg");
+	faces.push_back("images/top1.jpg");
+	faces.push_back("images/bottom1.jpg");
+	faces.push_back("images/back1.jpg");
+	faces.push_back("images/front1.jpg");
 	unsigned int cubemapTexture = loadCubemap(faces);
 
-	shader.use();
-	shader.setInt("skybox", 0);
+	cubemapShader.use();
+	cubemapShader.setInt("skybox", 0);
 
 	skyboxShader.use();
 	skyboxShader.setInt("skybox", 0);
+
+	lightShader.use();
+	lightShader.setInt("texture1", 0);
+
+	glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 
 	Shader modelShader("modelShader.vs", "modelShader.fs");
 
@@ -210,14 +216,24 @@ int main()
 
 		//	glDrawArrays(GL_TRIANGLES, 0, 36);
 		//}
+		lightShader.use();
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		lightShader.setMat4("projection", projection);
+		lightShader.setMat4("view", view);
+
+		lightShader.setVec3("viewPos", camera.Position);
+		lightShader.setVec3("lightPos", lightPos);
+		lightShader.setInt("blinn", blinn);
+		//std::cout << (blinn ? "Blinn-Phong" : "Phong") << std::endl;
 
 		// activate shader
 		modelShader.use();
 
 		// view/projection transformations
 
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-		glm::mat4 view = camera.GetViewMatrix();
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+		view = camera.GetViewMatrix();
 		modelShader.setMat4("projection", projection);
 		modelShader.setMat4("view", view);
 
@@ -244,14 +260,14 @@ int main()
 			sound.play("sounds\\PlaneSound.wav");
 			playingSound = 0;
 		}
-		shader.use();
+		cubemapShader.use();
 		model = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		shader.setMat4("model", model);
-		shader.setMat4("view", view);
-		shader.setMat4("projection", projection);
-		shader.setVec3("cameraPos", camera.Position);
+		cubemapShader.setMat4("model", model);
+		cubemapShader.setMat4("view", view);
+		cubemapShader.setMat4("projection", projection);
+		cubemapShader.setVec3("cameraPos", camera.Position);
 
 		// draw skybox as last
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -266,7 +282,7 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-
+	
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -315,7 +331,19 @@ void processInput(GLFWwindow* window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);*/
+
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && !blinnKeyPressed)
+	{
+		blinn = !blinn;
+		blinnKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE)
+	{
+		blinnKeyPressed = false;
+	}
+
 }
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

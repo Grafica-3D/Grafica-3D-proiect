@@ -183,6 +183,8 @@
   <ItemGroup>
     <None Include="6.2.cubemaps.fs" />
     <None Include="6.2.cubemaps.vs" />
+    <None Include="advanced_lighting.fs" />
+    <None Include="advanced_lighting.vs" />
     <None Include="modelShader.fs" />
     <None Include="modelShader.vs" />
     <None Include="shader.fs" />
