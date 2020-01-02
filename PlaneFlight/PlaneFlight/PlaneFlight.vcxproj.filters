@@ -73,11 +73,23 @@
     <None Include="modelShader.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="skybox.vs" />
-    <None Include="skybox.frag" />
-    <None Include="6.2.cubemaps.vs" />
-    <None Include="6.2.cubemaps.fs" />
-    <None Include="advanced_lighting.vs" />
-    <None Include="advanced_lighting.fs" />
+    <None Include="6.2.cubemaps.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="6.2.cubemaps.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="advanced_lighting.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="advanced_lighting.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox.vs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

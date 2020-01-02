@@ -167,6 +167,7 @@ int main()
 
 
 	Model terrain("models/terrain/final_terrain.obj");
+	Model plane("models/plane/plane.obj");
 	Sound sound;
 	sound.play("sounds\\PlaneSound.wav");
 	// render loop
@@ -238,12 +239,21 @@ int main()
 		modelShader.setMat4("view", view);
 
 		// render the loaded model
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-		modelShader.setMat4("model", model);
-		//nanosuitModel.Draw(modelShader);
+		glm::mat4 terrainModel = glm::mat4(1.0f);
+		terrainModel = glm::translate(terrainModel, glm::vec3(0.0f, -1.75f, 0.0f));
+		terrainModel = glm::scale(terrainModel, glm::vec3(0.2f, 0.2f, 0.2f));
+		modelShader.setMat4("model", terrainModel);
 		terrain.Draw(modelShader);
+
+		float degrees = 90 + glfwGetTime() / camera.GetSpeed();
+
+		glm::mat4 planeModel = glm::mat4(1.0f);
+		glm::vec3 targetPos = camera.GetPosition() + glm::vec3(0, -15.0, -15.0);
+		planeModel = glm::translate(planeModel, targetPos);
+		planeModel = glm::scale(planeModel, glm::vec3(0.3f, 0.3f, 0.3f));
+		planeModel = glm::rotate(planeModel, degrees, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelShader.setMat4("model", planeModel);
+		plane.Draw(modelShader);
 
 		camera.setOrbit(300.0);
 
@@ -255,10 +265,10 @@ int main()
 			playingSound = 0;
 		}
 		cubemapShader.use();
-		model = glm::mat4(1.0f);
+		terrainModel = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		cubemapShader.setMat4("model", model);
+		cubemapShader.setMat4("model", terrainModel);
 		cubemapShader.setMat4("view", view);
 		cubemapShader.setMat4("projection", projection);
 		cubemapShader.setVec3("cameraPos", camera.Position);
