@@ -23,7 +23,7 @@ const unsigned int SCR_HEIGHT = 600;
 bool blinn = false;
 bool blinnKeyPressed = false;
 // camera
-Camera camera(glm::vec3(0.0f, 50.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 90.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -245,13 +245,7 @@ int main()
 		//nanosuitModel.Draw(modelShader);
 		terrain.Draw(modelShader);
 
-		if (!skipFrames)
-		{
-			camera.setOrbit(200.0, deltaTime);
-			skipFrames = true;
-		}
-		else
-			skipFrames = false;
+		camera.setOrbit(300.0);
 
 		if (playingSound == 1)
 			sound.stop();

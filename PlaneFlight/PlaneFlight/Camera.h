@@ -18,7 +18,7 @@ enum Camera_Movement {
 // Default camera values
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 2.5f;
+const float SPEED = 3.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 bool orbit = false;
@@ -67,9 +67,9 @@ public:
 	{
 		return glm::lookAt(Position, Position + Front, Up);
 	}
-	void setOrbit(float radius , float deltaTime)
+	void setOrbit(float radius)
 	{
-		float cameraSpeed = SPEED * deltaTime + glfwGetTime();
+		float cameraSpeed = glfwGetTime() / SPEED;
 	    Position.x = radius * glm::sin(cameraSpeed);
 	    Position.z = radius * glm::cos(cameraSpeed);
 	}
