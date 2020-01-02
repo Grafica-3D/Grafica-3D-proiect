@@ -16,11 +16,11 @@ enum Camera_Movement {
 };
 
 // Default camera values
-const float YAW = -90.0f;
-const float PITCH = 0.0f;
+const float YAW = -85.0f;
+const float PITCH = -45.0f;
 const float SPEED = 7.0f;
 const float SENSITIVITY = 0.1f;
-const float ZOOM = 45.0f;
+const float ZOOM = 85.0f;
 bool orbit = false;
 
 
@@ -67,6 +67,7 @@ public:
 	{
 		return glm::lookAt(Position, Position + Front, Up);
 	}
+
 	void setOrbit(float radius)
 	{
 		float cameraSpeed = glfwGetTime() / SPEED;
@@ -115,12 +116,12 @@ public:
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 	void ProcessMouseScroll(float yoffset)
 	{
-		if (Zoom >= 1.0f && Zoom <= 45.0f)
+		if (Zoom >= 1.0f && Zoom <= 85.0f)
 			Zoom -= yoffset;
 		if (Zoom <= 1.0f)
 			Zoom = 1.0f;
-		if (Zoom >= 45.0f)
-			Zoom = 45.0f;
+		if (Zoom >= 85.0f)
+			Zoom = 85.0f;
 	}
 
 	glm::vec3 GetPosition()
