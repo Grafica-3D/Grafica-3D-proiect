@@ -187,8 +187,6 @@
     <None Include="lamp.vs" />
     <None Include="cubemaps.fs" />
     <None Include="cubemaps.vs" />
-    <None Include="shader.fs" />
-    <None Include="shader.vs" />
     <None Include="skybox.frag" />
     <None Include="skybox.vs" />
   </ItemGroup>

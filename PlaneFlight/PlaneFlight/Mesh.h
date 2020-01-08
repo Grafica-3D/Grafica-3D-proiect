@@ -10,7 +10,6 @@
 
 #include <string>
 #include <fstream>
-#include <sstream>
 #include <iostream>
 #include <vector>
 
@@ -19,8 +18,6 @@ struct Vertex
 	glm::vec3 Position;
 	glm::vec3 Normal;
 	glm::vec2 TexCoords;
-	glm::vec3 Tangent;
-	glm::vec3 Bitangent;
 };
 
 struct TextureStruct
@@ -33,11 +30,11 @@ struct TextureStruct
 class Mesh {
 public:
 	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	std::vector<unsigned int> indexes;
 	std::vector<TextureStruct> textures;
 	unsigned int VAO;
 
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureStruct> textures);
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indexes, std::vector<TextureStruct> textures);
 	void Draw(Shader shader);
 
 private:

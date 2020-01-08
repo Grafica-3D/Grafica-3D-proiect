@@ -16,18 +16,16 @@
 #include <iostream>
 #include <vector>
 
-unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
+unsigned int TextureFromFile(const char* path, const std::string& directory);
 
 class Model
 {
 public:
-	/*  Model Data */
 	std::vector<TextureStruct> textures_loaded;
 	std::vector<Mesh> meshes;
 	std::string directory;
-	bool gammaCorrection;
 
-	Model(std::string const& path, bool gamma = false);
+	Model(std::string const& path);
 	void Draw(Shader shader);
 
 private:
