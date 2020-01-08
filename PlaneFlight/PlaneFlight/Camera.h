@@ -116,12 +116,12 @@ public:
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 	void ProcessMouseScroll(float yoffset)
 	{
-		if (Zoom >= 1.0f && Zoom <= 85.0f)
+		if (Zoom >= 1.0f && Zoom <= 110.0f)
 			Zoom -= yoffset;
 		if (Zoom <= 1.0f)
 			Zoom = 1.0f;
-		if (Zoom >= 85.0f)
-			Zoom = 85.0f;
+		if (Zoom >= 110.0f)
+			Zoom = 110.0f;
 	}
 
 	glm::vec3 GetPosition()
