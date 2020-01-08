@@ -18,8 +18,8 @@ void processInput(GLFWwindow* window);
 unsigned int loadCubemap(std::vector<std::string> faces);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 bool blinn = false;
 bool blinnKeyPressed = false;
 
@@ -34,7 +34,8 @@ int playingSound = 0;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
-
+//lighting 
+glm::vec3 lightPos(1.2f, 200.0f, 2.0f);
 
 int main()
 {
@@ -78,9 +79,88 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// build and compile our shaders 
-	Shader cubemapShader("6.2.cubemaps.vs", "6.2.cubemaps.fs");
+	Shader cubemapShader("cubemaps.vs", "cubemaps.fs");
 	Shader skyboxShader( "skybox.vs", "skybox.frag");
-	Shader lightShader("advanced_lighting.vs", "advanced_lighting.fs");
+	Shader lightingShader("basic_lighting.vs", "basic_lighting.fs");
+	Shader lampShader("lamp.vs", "lamp.fs");
+
+#pragma region Light
+ // set up vertex data (and buffer(s)) and configure vertex attributes
+	// ------------------------------------------------------------------
+float vertices[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+};
+// first, configure the cube's VAO (and VBO)
+unsigned int VBO, cubeVAO;
+glGenVertexArrays(1, &cubeVAO);
+glGenBuffers(1, &VBO);
+
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+glBindVertexArray(cubeVAO);
+
+// position attribute
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);
+// normal attribute
+glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+glEnableVertexAttribArray(1);
+
+
+// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
+unsigned int lightVAO;
+glGenVertexArrays(1, &lightVAO);
+glBindVertexArray(lightVAO);
+
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+// note that we update the lamp's position attribute's stride to reflect the updated buffer data
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);
+
+#pragma endregion
+
+#pragma region Skybox
 	GLfloat skyboxVertices[] =
 	{
 	    -1.0f,  1.0f, -1.0f,
@@ -154,15 +234,7 @@ int main()
 	skyboxShader.use();
 	skyboxShader.setInt("skybox", 0);
 
-	lightShader.use();
-	lightShader.setInt("texture1", 0);
-
-	glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
-
-	Shader modelShader("modelShader.vs", "modelShader.fs");
-
-
-	//glBindVertexArray(VAO);
+#pragma endregion
 
 
 
@@ -186,65 +258,33 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// bind textures on corresponding texture units
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture.id);
-
 		// activate shader
-		//vertexShader.use();
-
-		//// pass projection matrix to shader (note that in this case it could change every frame)
-		//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		//vertexShader.setMat4("projection", projection);
-
-		//// camera/view transformation
-		//glm::mat4 view = camera.GetViewMatrix();
-		//vertexShader.setMat4("view", view);
-
-		//// render boxes
-		//glBindVertexArray(VAO);
-		//for (unsigned int i = 0; i < 10; i++)
-		//{
-		//	// calculate the model matrix for each object and pass it to shader before drawing
-		//	glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		//	model = glm::translate(model, cubePositions[i]);
-		//	float angle = 20.0f * i;
-		//	model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		//	vertexShader.setMat4("model", model);
-
-		//	glDrawArrays(GL_TRIANGLES, 0, 36);
-		//}
-		lightShader.use();
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		lightShader.setMat4("projection", projection);
-		lightShader.setMat4("view", view);
-
-		lightShader.setVec3("viewPos", camera.Position);
-		lightShader.setVec3("lightPos", lightPos);
-		lightShader.setInt("blinn", blinn);
-		//std::cout << (blinn ? "Blinn-Phong" : "Phong") << std::endl;
-
-		// activate shader
-		modelShader.use();
-
+		
+		// be sure to activate shader when setting uniforms/drawing objects
+		lightingShader.use();
+		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightingShader.setVec3("lightPos", lightPos);
+		lightingShader.setVec3("viewPos", camera.Position);
 		// view/projection transformations
 
-		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-		view = camera.GetViewMatrix();
-		modelShader.setMat4("projection", projection);
-		modelShader.setMat4("view", view);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		
+		lightingShader.setMat4("projection", projection);
+		lightingShader.setMat4("view", view);
 
 		// render the loaded model
 		glm::mat4 terrainModel = glm::mat4(1.0f);
 		terrainModel = glm::translate(terrainModel, glm::vec3(0.0f, -1.75f, 0.0f));
 		terrainModel = glm::scale(terrainModel, glm::vec3(0.2f, 0.2f, 0.2f));
-		modelShader.setMat4("model", terrainModel);
-		terrain.Draw(modelShader);
-
+		
+		
+		lightingShader.setMat4("model", terrainModel);
+		terrain.Draw(lightingShader);
 		float degrees = 90 + glfwGetTime() / camera.GetSpeed();
 
 		glm::mat4 planeModel = glm::mat4(1.0f);
@@ -252,8 +292,30 @@ int main()
 		planeModel = glm::translate(planeModel, targetPos);
 		planeModel = glm::scale(planeModel, glm::vec3(0.3f, 0.3f, 0.3f));
 		planeModel = glm::rotate(planeModel, degrees, glm::vec3(0.0f, 1.0f, 0.0f));
-		modelShader.setMat4("model", planeModel);
-		plane.Draw(modelShader);
+		lightingShader.setMat4("model", planeModel);
+	
+		plane.Draw(lightingShader);
+	
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		view = camera.GetViewMatrix();
+		// also draw the lamp object
+#pragma region ChangethelightsPosition
+		  // change the light's position values over time (can be done anywhere in the render loop actually, but try to do it at least before using the light source positions)
+		//lightPos.x = 1.0f + sin(glfwGetTime()) * 100.0f;
+		//lightPos.z = sin(glfwGetTime() / 2.0f) * 100.0f;  
+
+#pragma endregion
+		lampShader.use();
+
+		lampShader.setMat4("projection", projection);
+		lampShader.setMat4("view", view);
+		glm::mat4 model2 = glm::mat4(1.0f);
+		model2 = glm::translate(model2, lightPos);
+		model2 = glm::scale(model2, glm::vec3(0.2f)); // a smaller cube
+		lampShader.setMat4("model", model2);
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		camera.setOrbit(300.0);
 
@@ -286,8 +348,6 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-	
-
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

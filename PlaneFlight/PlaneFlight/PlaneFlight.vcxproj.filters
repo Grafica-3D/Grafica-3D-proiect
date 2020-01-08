@@ -67,28 +67,28 @@
     <None Include="shader.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="modelShader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="modelShader.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="6.2.cubemaps.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="6.2.cubemaps.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="advanced_lighting.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="advanced_lighting.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="skybox.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="skybox.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemaps.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemaps.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lamp.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lamp.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="basic_lighting.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="basic_lighting.fs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
